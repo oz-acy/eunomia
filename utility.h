@@ -140,6 +140,148 @@ split(const std::basic_string<C, T, A>& str, C dlm)
 }
 
 
+//////// STRING TRIM ////////////////
+/**
+ * @brief 文字列の先頭と末尾からの指定文字の除去
+ *
+ * 文字列の先頭と末尾から、指定された文字を除去した文字列を返す。
+ * @param str 操作の對象となる文字列
+ * @param removed strの先頭と末尾から除去されるべき文字を列擧した文字列
+ * @return strの先頭と末尾からremovedを構成する文字を除去した文字列
+ */
+template<class C, class T, class A>
+inline
+std::basic_string<C, T, A>
+trim(
+  const std::basic_string<C, T, A>& str,
+  const std::basic_string<C, T, A>& removed)
+{
+  auto l = str.find_first_not_of(removed);
+
+  if (l == std::basic_string<C, T, A>::npos)
+    return std::string("");
+
+  auto r = str.find_last_not_of(removed);
+  return str.substr(l, r - l + 1);
+}
+
+
+/**
+ * @brief 文字列の先頭と末尾からの指定文字の除去
+ *
+ * 文字列の先頭と末尾から、指定された文字を除去した文字列を返す。
+ * @param str 操作の對象となる文字列
+ * @param removed strの先頭と末尾から除去されるべき文字を列擧したC文字列
+ * @return strの先頭と末尾からremovedを構成する文字を除去した文字列
+ */
+template<class C, class T, class A>
+inline
+std::basic_string<C, T, A>
+trim(const std::basic_string<C, T, A>& str, const C* removed)
+{
+  auto l = str.find_first_not_of(removed);
+
+  if (l == std::basic_string<C, T, A>::npos)
+    return std::string("");
+
+  auto r = str.find_last_not_of(removed);
+  return str.substr(l, r - l + 1);
+}
+
+
+/**
+ * @brief 文字列の先頭からの指定文字の除去
+ *
+ * 文字列の先頭から、指定された文字を除去した文字列を返す。
+ * @param str 操作の對象となる文字列
+ * @param removed strの先頭から除去されるべき文字を列擧した文字列
+ * @return strの先頭からremovedを構成する文字を除去した文字列
+ */
+template<class C, class T, class A>
+inline
+std::basic_string<C, T, A>
+ltrim(
+  const std::basic_string<C, T, A>& str,
+  const std::basic_string<C, T, A>& removed)
+{
+  auto l = str.find_first_not_of(removed);
+
+  if (l == std::basic_string<C, T, A>::npos)
+    return std::string("");
+  else
+    return str.substr(l, str.size() - l);
+}
+
+
+/**
+ * @brief 文字列の先頭からの指定文字の除去
+ *
+ * 文字列の先頭から、指定された文字を除去した文字列を返す。
+ * @param str 操作の對象となる文字列
+ * @param removed strの先頭から除去されるべき文字を列擧したC文字列
+ * @return strの先頭からremovedを構成する文字を除去した文字列
+ */
+template<class C, class T, class A>
+inline
+std::basic_string<C, T, A>
+ltrim(const std::basic_string<C, T, A>& str, const C* removed)
+{
+  auto l = str.find_first_not_of(removed);
+
+  if (l == std::basic_string<C, T, A>::npos)
+    return std::string("");
+  else
+    return str.substr(l, str.size() - l);
+}
+
+
+/**
+ * @brief 文字列の末尾からの指定文字の除去
+ *
+ * 文字列の末尾から、指定された文字を除去した文字列を返す。
+ * @param str 操作の對象となる文字列
+ * @param removed strの末尾から除去されるべき文字を列擧した文字列
+ * @return strの末尾からremovedを構成する文字を除去した文字列
+ */
+template<class C, class T, class A>
+inline
+std::basic_string<C, T, A>
+rtrim(
+  const std::basic_string<C, T, A>& str,
+  const std::basic_string<C, T, A>& removed)
+{
+  auto r = str.find_last_not_of(removed);
+  if (r == std::basic_string<C, T, A>::npos)
+    return std::string("");
+  else
+    return str.substr(0, r + 1);
+}
+
+
+/**
+ * @brief 文字列の末尾からの指定文字の除去
+ *
+ * 文字列の末尾から、指定された文字を除去した文字列を返す。
+ * @param str 操作の對象となる文字列
+ * @param removed strの末尾から除去されるべき文字を列擧したC文字列
+ * @return strの末尾からremovedを構成する文字を除去した文字列
+ */
+template<class C, class T, class A>
+inline
+std::basic_string<C, T, A>
+rtrim(const std::basic_string<C, T, A>& str, const C* removed)
+{
+  auto r = str.find_last_not_of(removed);
+  if (r == std::basic_string<C, T, A>::npos)
+    return std::string("");
+  else
+    return str.substr(0, r + 1);
+}
+
+
+
+
+
 }// end of namespace eunomia
 
 

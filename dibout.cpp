@@ -212,7 +212,7 @@ eunomia::saveDib(
 {
   using namespace std;
 
-  std::ofstream ofs(path, ios::out|ios::binary);
+  std::ofstream ofs(path, ios::out | ios::binary);
   if (!ofs)
     return false;
 

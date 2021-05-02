@@ -36,6 +36,8 @@
 #ifndef INCLUDE_GUARD_EUNOMIA_DEBUG_LOGGER_H
 #define INCLUDE_GUARD_EUNOMIA_DEBUG_LOGGER_H
 
+#include <filesystem>
+
 #ifndef NDEBUG
 #include <iostream>
 #include <fstream>
@@ -103,7 +105,7 @@ public:
 
 #ifdef NDEBUG
 private:
-  Debug(const char* path) noexcept {}
+  Debug(const std::filesystem::path& path) noexcept {}
 
 public:
   template<typename T>
@@ -120,7 +122,7 @@ public:
 private:
   std::ofstream ofs_;
 
-  Debug(const char* path) : ofs_(path, std::ios::app) {}
+  Debug(const std::filesystem::path& path) : ofs_(path, std::ios::app) {}
 
 public:
   template<typename T>

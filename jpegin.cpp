@@ -35,6 +35,7 @@
 #include "debuglogger.h"
 
 
+/*
 namespace
 {
 
@@ -54,14 +55,15 @@ std::FILE* openfile(const wchar_t* path)
 
 
 }//end of namespace NONAME
-
+*/
 
 
 
 std::unique_ptr<eunomia::Picture>
 eunomia::loadJpeg(const std::filesystem::path& path) noexcept
 {
-  auto infile = openfile(path.c_str());
+  //auto infile = openfile(path.c_str());
+  auto infile = std::fopen(path.string().c_str(), "rb");
   if (!infile)
     return nullptr;
 
