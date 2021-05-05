@@ -29,7 +29,7 @@
  * @author oZ/acy (名賀月晃嗣)
  * @brief PNG形式畫像ファイルの讀み込み
  *
- * @date 2021.4.26 LIBPOLYMNIAのPNG讀み込み處理から改作
+ * @date 2021.4.29 v0.1 LIBPOLYMNIAのPNG讀み込み處理から改作
  */
 #include <iostream>
 #include <fstream>
@@ -102,11 +102,14 @@ void pngRead_(png_structp ppng, png_bytep data, png_size_t length)
 /**
  * @brief エラー處理用函數
  *
- * libpngがエラーを起こしたときに呼び出す
+ * libpngがエラーを起こしたときに呼び出す函數。
+ *
+ * @date 2021.5.5 debugloggerの仕樣變更に伴ふ修正
  */
 void pngError_(png_structp png_ptr, png_const_charp str)
 {
-  DLOG << DLTSTMP << str << std::endl;
+  eunomia::debug::out() << eunomia::debug::timestamp() << str << std::endl;
+  //DLOG << DLTSTMP << str << std::endl;
   throw PngReadException_();
 }
 

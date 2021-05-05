@@ -29,7 +29,7 @@
  * @author oZ/acy
  * @brief JPEG入出力のエラーハンドラの實裝
  *
- * @date 2021.4.28 LIBPOLYMNIAから改作
+ * @date 2021.4.29 v0.1 LIBPOLYMNIAから改作
  *
  */
 #include <iostream>
@@ -40,11 +40,16 @@
 namespace
 {
 
+/*
+ * @date 2021.5.5 debugloggerの仕樣變更に伴ふ修正
+ */
 void myErrorOutput_(j_common_ptr cinfo)
 {
   char buf[JMSG_LENGTH_MAX];
   cinfo->err->format_message(cinfo, buf);
-  DLOG << DLTSTMP << buf << std::endl;
+
+  eunomia::debug::out() << eunomia::debug::timestamp() << buf << std::endl;
+  //DLOG << DLTSTMP << buf << std::endl;
 }
 
 void myErrorExit_(j_common_ptr cinfo)

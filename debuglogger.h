@@ -31,145 +31,135 @@
  * @brief デバッグ用ロガー
  *
  * @date 2021.4.29 v0.1
+ * @date 2021.5.5 仕樣を全面的に變更
  *
  */
 #ifndef INCLUDE_GUARD_EUNOMIA_DEBUG_LOGGER_H
 #define INCLUDE_GUARD_EUNOMIA_DEBUG_LOGGER_H
 
 #include <filesystem>
-
-#ifndef NDEBUG
 #include <iostream>
 #include <fstream>
 #include <ctime>
-#include <iomanip>
-#endif // NDEBUG
 
 
-#ifndef DLOG
-/**
- * @brief デバッグログ出力ストリーム
- *
- * デバッグログを出力する出力ストリーム。DEBUGLOGGERと同じストリームを指す。
- */
-#define DLOG eunomia::Debug::logger()
-#endif
-#ifndef DLTSTMP
-/**
- *  @brief デバッグログ出力ストリームにタイムスタンプを出力するオブジェクト
- *
- * デバッグログ出力ストリームに插入子<<で與へると、
- * タイムスタンプを出力するオブジェクト。DEBUGLOGGER_TIMESTAMPと同じ。
- */
-#define DLTSTMP eunomia::Debug::Timestamp()
-#endif
-#ifndef DEBUGLOGGER
-/**
- * @brief デバッグログ出力ストリーム
- *
- * デバッグログを出力する出力ストリーム。DLOGと同じストリームを指す。
- */
-#define DEBUGLOGGER eunomia::Debug::logger()
-#endif
-#ifndef DEBUGLOGGER_TIMESTAMP
-/**
- * @brief デバッグログ出力ストリームにタイムスタンプを出力するオブジェクト
- *
- * デバッグログ出力ストリームに插入子<<で與へると、
- * タイムスタンプを出力するオブジェクト。DLTSTMPと同じ。
- */
-#define DEBUGLOGGER_TIMESTAMP eunomia::Debug::Timestamp()
-#endif
-
-
-namespace eunomia
+namespace eunomia::debug
 {
 
+namespace implement_
+{
 /**
  * @brief デバッグログ出力ストリーム
  *
- * デバッグログを出力するためのファイル出力ストリームを管理し、
- * ログを出力するための插入子<<を提供する。
+ * 插入子<<を實裝して出力ストリームに擬態し、
+ * (デバッグビルド時には)
+ * 内部に保持するファイル出力ストリームに出力を仲介する。
  */
-class Debug
+class DebugLogger_
 {
 public:
-  /**
-   * @brief タイムスタンプ
-   *
-   * Debug は、Timestamp のオブジェクトを插入(<<)されると、
-   * その管理してゐるファイル出力ストリームにタイムスタンプを出力する。
-   */
-  class Timestamp{};
+  class Timestamp_{};
 
+private:
+  DebugLogger_() = default;
 
 #ifdef NDEBUG
-private:
-  Debug(const std::filesystem::path& path) noexcept {}
 
 public:
   template<typename T>
-  Debug& operator<<(const T& x) { return *this; }
+  DebugLogger_& operator<<(const T& x) { return *this; }
 
   template<typename T>
-  Debug& operator<<(const T* x) { return *this; }
+  DebugLogger_& operator<<(const T* x) { return *this; }
 
-  Debug& operator<<(std::ostream& (*mnp)(std::ostream&)) { return *this; }
-  Debug& operator<<(const Timestamp& ts) { return *this; }
+  DebugLogger_& operator<<(std::ostream& (*mnp)(std::ostream&))
+    { return *this; }
+
+  DebugLogger_& operator<<(const Timestamp_& ts) { return *this; }
+
+  static DebugLogger_& out()
+  {
+    static DebugLogger_ d;
+    return d;
+  }
+
+  static void set(const std::filesystem::path& path) {}
 
 
-#else
+#else // ifndef NDEBUG
+
 private:
-  std::ofstream ofs_;
-
-  Debug(const std::filesystem::path& path) : ofs_(path, std::ios::app) {}
+  static std::ofstream ofs_;
 
 public:
   template<typename T>
-  Debug& operator<<(const T& x)
+  DebugLogger_& operator<<(const T& x)
   {
     ofs_ << x;
     return *this;
   }
 
   template<typename T>
-  Debug& operator<<(const T* x)
+  DebugLogger_& operator<<(const T* x)
   {
     ofs_ << x;
     return *this;
   }
 
-  Debug& operator<<(std::ostream& (*mnp)(std::ostream&))
+  DebugLogger_& operator<<(std::ostream& (*mnp)(std::ostream&))
   {
     ofs_ << mnp;
     return *this; 
   }
 
-  Debug& operator<<(const Timestamp& ts)
+  DebugLogger_& operator<<(const Timestamp_& ts)
   {
     auto now = std::time(nullptr);
     ofs_ << std::put_time(std::localtime(&now), "[%Y/%m/%d %H:%M:%S] ");
     return *this;
   }
 
-
-#endif // NDEBUG
-
-public:
-  /**
-   * @brief デバッグログ出力ストリームの取得
-   *
-   * 唯一のデバッグログ出力ストリームのインスタンスを取得する。
-   */
-  static Debug& logger()
+  static DebugLogger_& out()
   {
-    static Debug dl("debuglog.txt");
-    return dl;
+    static DebugLogger_ d;
+    if (!ofs_.is_open())
+      ofs_.open("eunomiaDebugLog.txt", std::ios::app);
+    return d;
   }
+
+  static void set(const std::filesystem::path& path)
+  {
+    if (!ofs_.is_open())
+      ofs_.open(path, std::ios::app);
+  }
+#endif
 };
 
 
-}//end of namespace eunomia
+}//endo of namespace implement_
+
+
+inline implement_::DebugLogger_& out()
+{
+  return implement_::DebugLogger_::out();
+}
+
+
+inline implement_::DebugLogger_::Timestamp_ timestamp()
+{
+  return implement_::DebugLogger_::Timestamp_();
+}
+
+
+inline void setLoggingFile(const std::filesystem::path& path)
+{
+  implement_::DebugLogger_::set(path);
+}
+
+
+}//end of namespace eunomia::debug
+
+
 
 
 #endif // INCLUDE_GUARD_EUNOMIA_DEBUG_LOGGER_H
