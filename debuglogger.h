@@ -51,9 +51,8 @@ namespace implement_
 /**
  * @brief デバッグログ出力ストリーム
  *
- * 插入子<<を實裝して出力ストリームに擬態し、
- * (デバッグビルド時には)
- * 内部に保持するファイル出力ストリームに出力を仲介する。
+ * デバッグ用のログを出力するためのファイル出力ストリームを管理し、
+ * ログを出力するための插入子<<を提供する。
  */
 class DebugLogger_
 {
@@ -89,7 +88,8 @@ public:
 #else // ifndef NDEBUG
 
 private:
-  static std::ofstream ofs_;
+  static inline std::filesystem::path path_ = "eunomiaDebugLog.txt";
+  static inline std::ofstream ofs_;
 
 public:
   template<typename T>
@@ -123,15 +123,11 @@ public:
   {
     static DebugLogger_ d;
     if (!ofs_.is_open())
-      ofs_.open("eunomiaDebugLog.txt", std::ios::app);
+      ofs_.open(path_, std::ios::app);
     return d;
   }
 
-  static void set(const std::filesystem::path& path)
-  {
-    if (!ofs_.is_open())
-      ofs_.open(path, std::ios::app);
-  }
+  static void set(const std::filesystem::path& path) { path_ = path; }
 #endif
 };
 
