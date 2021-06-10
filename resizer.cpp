@@ -81,18 +81,19 @@ loadImage(
   std::unique_ptr<eunomia::PictureRgba>& uprgba,
   std::unique_ptr<eunomia::PictureIndexed>& upindx)
 {
-  using fspath = std::filesystem::path;
+  //using fspath = std::filesystem::path;
 
-  auto ext = path.extension();
-  auto e = toLower(ext);
+  //auto ext = path.extension();
+  //auto e = toLower(ext);
+  auto e = toLower(path.extension().string());
 
-  if (e == fspath(".bmp")) {
+  if (e == ".bmp") {
     return eunomia::loadDib(path, uppict, upindx);
   }
-  else if (e == fspath(".png")) {
+  else if (e == ".png") {
     return eunomia::loadPng(path, uppict, uprgba, upindx);
   }
-  else if (e == fspath(".jpg") || e == fspath(".jpeg")) {
+  else if (e == ".jpg" || e == ".jpeg") {
     uppict = eunomia::loadJpeg(path);
     return (bool)uppict;
   }
@@ -106,18 +107,19 @@ loadImage(
  */
 bool saveImage(const eunomia::Picture& pict, const std::filesystem::path& path)
 {
-  using fspath = std::filesystem::path;
+  //using fspath = std::filesystem::path;
 
-  auto ext = path.extension();
-  auto e = toLower(ext);
+  //auto ext = path.extension();
+  //auto e = toLower(ext);
+  auto e = toLower(path.extension().string());
 
-  if (e == fspath(".png")) {
+  if (e == ".png") {
     return eunomia::savePng(pict, path);
   }
-  else if (e == fspath(".jpg") || e == fspath(".jpeg")) {
+  else if (e == ".jpg" || e == ".jpeg") {
     return eunomia::saveJpeg(pict, path);
   }
-  else if (e == fspath(".bmp")) {
+  else if (e == ".bmp") {
     return eunomia::saveDib(pict, path);
   }
   else

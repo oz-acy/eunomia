@@ -45,6 +45,7 @@
 #include <cstdint>
 #include "exception.h"
 #include "noncopyable.h"
+#include "rect.h"
 
 
 namespace eunomia
@@ -66,6 +67,7 @@ struct Point
 /**
  *  @brief 長方形
  */
+/*
 struct Rect
 {
   int left;   ///< 左端のX座標
@@ -97,6 +99,7 @@ struct Rect
   constexpr int width() const noexcept { return right - left; }
   constexpr int height() const noexcept { return bottom - top; }
 };
+*/
 
 
 /**

@@ -37,6 +37,7 @@ set(EUNOMIA_HEADERS
   noncopyable.h
   utility.h
   debuglogger.h
+  rect.h
   imagebuffer.h
     ibuf_blt.h
     ibuf_draw.h
@@ -77,6 +78,7 @@ set_target_properties(eunomia
 )
 target_compile_options(eunomia PRIVATE
   $<$<CXX_COMPILER_ID:GNU>:-Wall -O3>
+  $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
 )
 target_compile_definitions(eunomia PRIVATE NDEBUG)
 target_include_directories(eunomia PRIVATE
@@ -95,6 +97,7 @@ target_link_libraries(eunomia PRIVATE
 add_library(eunomia-debug ${EUNOMIA_SOURCES})
 target_compile_options(eunomia-debug PRIVATE
   $<$<CXX_COMPILER_ID:GNU>:-Wall -g3 -ggdb>
+  $<$<CXX_COMPILER_ID:Clang>:-Wall -g3 -ggdb>
 )
 target_include_directories(eunomia-debug PRIVATE
   $<$<BOOL:PNG_FOUND>:${PNG_INCLUDE_DIRS}>
@@ -124,8 +127,6 @@ install(EXPORT eunomia-export
 
 
 #### resizer ########
-# 以下、Clang用のオプションを加へはしたが、
-# <filesystem>が上手くリンクできないので結局は使用不能である。
 if (ZLIB_FOUND AND PNG_FOUND AND JPEG_FOUND)
   add_executable(resizer
     resizer.cpp
@@ -133,7 +134,6 @@ if (ZLIB_FOUND AND PNG_FOUND AND JPEG_FOUND)
   target_compile_options(resizer PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
     $<$<CXX_COMPILER_ID:GNU>:-Wall -O3>
-    $<$<AND:$<BOOL:MINGW>,$<CXX_COMPILER_ID:GNU>>:-DFSUSESWCHART>
   )
   target_include_directories(resizer PRIVATE
     ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${JPEG_INCLUDE_DIRS}
@@ -148,22 +148,23 @@ if (ZLIB_FOUND AND PNG_FOUND AND JPEG_FOUND)
   #install(TARGETS resizer
   #  DESTINATION bin
   #)
+endif()
 
+if (ZLIB_FOUND AND PNG_FOUND)
   add_executable(hextest
     hextest.cpp
   )
   target_compile_options(hextest PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
     $<$<CXX_COMPILER_ID:GNU>:-Wall -O3>
-    $<$<AND:$<BOOL:MINGW>,$<CXX_COMPILER_ID:GNU>>:-DFSUSESWCHART>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
   )
   target_compile_definitions(hextest PRIVATE NDEBUG)
   target_include_directories(hextest PRIVATE
     ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS}
   )
   target_link_options(hextest PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:-static>
     $<$<CXX_COMPILER_ID:GNU>:-static>
+    $<$<CXX_COMPILER_ID:Clang>:-static>
   )
   target_link_libraries(hextest eunomia png z)
 

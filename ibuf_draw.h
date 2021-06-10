@@ -31,6 +31,7 @@
  *
  * @date 2016.2.26 ellipse()内の不使用變數の宣言を削除
  * @date 2021.4.22 LIBPOLYMNIAからLIBEUNOMIAに移植
+ * @date 2021.6.10 paintFill()内の不使用變數の宣言を削除
  *
  */
 /* This file is included by "imagebuffer.h". */
@@ -415,8 +416,6 @@ inline void eunomia::ImageBuffer<C_>::paintFill(int x, int y, const C_& color)
 
     // 現在の地點を塗る
     pixel(xx, yy) = color;
-
-    int r = xx + 1;
 
     C_* lb = lineBuffer(yy);
     C_* lbu = lineBuffer(yy - 1);
