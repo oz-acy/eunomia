@@ -34,7 +34,6 @@
  */
 #include <iostream>
 #include <filesystem>
-#include <type_traits>
 #include <cctype>
 #include <cwctype>
 #include "dibio.h"
@@ -81,10 +80,6 @@ loadImage(
   std::unique_ptr<eunomia::PictureRgba>& uprgba,
   std::unique_ptr<eunomia::PictureIndexed>& upindx)
 {
-  //using fspath = std::filesystem::path;
-
-  //auto ext = path.extension();
-  //auto e = toLower(ext);
   auto e = toLower(path.extension().string());
 
   if (e == ".bmp") {
@@ -107,10 +102,6 @@ loadImage(
  */
 bool saveImage(const eunomia::Picture& pict, const std::filesystem::path& path)
 {
-  //using fspath = std::filesystem::path;
-
-  //auto ext = path.extension();
-  //auto e = toLower(ext);
   auto e = toLower(path.extension().string());
 
   if (e == ".png") {

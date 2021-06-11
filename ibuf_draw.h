@@ -44,7 +44,7 @@
 template<class C_>
 inline void eunomia::ImageBuffer<C_>::clear(const C_& color)
 {
-  std::uint8_t lp = buffer();
+  std::uint8_t* lp = buffer();
   for (int j = 0; j < height(); ++j, lp += pitch())
     std::fill_n(reinterpret_cast<C_*>(lp), width(), color);
 }

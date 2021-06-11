@@ -82,4 +82,4 @@ $ make install
 ## 作者
 oZ/acy (名賀月晃嗣)
 * <acy@hiemalis.org>
-* <http://www.hiemalis.org>
+* <https://www.hiemalis.org/>
