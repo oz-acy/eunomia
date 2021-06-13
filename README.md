@@ -58,8 +58,9 @@ JPEGの入出力は以下に依存してゐる。
 各ライブラリの作者に謝意と敬意を表する。
 
 
-## 使ひ方
+## 利用方法
 
+### 導入
 CMakeを用ゐてインストールする。
 
 ```bash
@@ -73,6 +74,12 @@ $ make install
 ヘッダファイルは${prefix}/include/eunomiaの下にインストールされる。
 
 ライブラリを利用するときには、CMakeを用ゐるのであれば find_package(eunomia) すれば色々捗る、はず。
+
+
+### リファレンス
+Doxygenを用ゐて生成したリファレンスを
+<https://www.hiemalis.org/~acy/swlib/eunomia/>
+に置いてゐる。
 
 
 ## ライセンス
