@@ -89,4 +89,4 @@ Doxygenを用ゐて生成したリファレンスを
 ## 作者
 oZ/acy (名賀月晃嗣)
 * <acy@hiemalis.org>
-* <https://www.hiemalis.org/>
+* <https://www.hiemalis.org/~acy/>
