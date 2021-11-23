@@ -65,44 +65,6 @@ struct Point
 
 
 /**
- *  @brief 長方形
- */
-/*
-struct Rect
-{
-  int left;   ///< 左端のX座標
-  int top;    ///< 上端のY座標
-  int right;  ///< 右端のX座標
-  int bottom; ///< 下端のY座標
-
-  Rect() = default;
-  constexpr Rect(int l, int t, int r, int b) noexcept
-    : left(l), top(t), right(r), bottom(b)
-    {}
-
-  void normalize()
-    noexcept(
-      std::is_nothrow_move_constructible<int>::value
-      && std::is_nothrow_move_assignable<int>::value)
-  {
-    if (left > right)
-      std::swap(left, right);
-    if (top > bottom)
-      std::swap(top, bottom);
-  }
-
-  constexpr bool isNormalized() const noexcept
-  {
-    return left <= right && top <= bottom;
-  }
-
-  constexpr int width() const noexcept { return right - left; }
-  constexpr int height() const noexcept { return bottom - top; }
-};
-*/
-
-
-/**
  * @brief 範圍逸脱例外
  */
 class RangeOverException : public eunomia::Exception

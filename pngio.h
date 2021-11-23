@@ -30,6 +30,7 @@
  *  @brief PNG畫像の入出力
  *
  *  @date 2021.4.29 v0.1
+ *  @date 2021.11.23 PictureIndexed向けのsavePng()の仕樣を變更
  *
  */
 #ifndef INCLUDE_GUARD_EUNOMIA_PNG_INPUT_OUTPUT_H
@@ -83,21 +84,27 @@ bool savePng(const Picture& pict, const std::filesystem::path& path);
  * @brief PNGファイルの保存
  *
  * 畫像をPNG形式で保存する。
- * @param path 保存すべきPNGファイルのパス
  * @param pict 保存する畫像
+ * @param path 保存すべきPNGファイルのパス
  * @return 成功時にはtrue、さもなくばfalseを返す。
  */
-bool savePng(const PictureRgba& pict, const std::filesystem::path& path);
+bool
+savePng(const PictureRgba& pict, const std::filesystem::path& path);
 
 /**
  * @brief PNGファイルの保存
  *
- * 畫像をPNG形式で保存する。
- * @param path 保存すべきPNGファイルのパス
+ * 畫像をPNG形式で保存する。透過色を用ゐることもできる。
  * @param pict 保存する畫像
+ * @param path 保存すべきPNGファイルのパス
+ * @param trns 透過色を用ゐる場合はtrue、さもなくばfalseを指定する。
+ * @param tpal 透過色とするパレットの番號
  * @return 成功時にはtrue、さもなくばfalseを返す。
  */
-bool savePng(const PictureIndexed& pict, const std::filesystem::path& path);
+bool
+savePng(
+  const PictureIndexed& pict, const std::filesystem::path& path,
+  bool trns = false, std::uint8_t tpal = 0);
 
 
 }// end of namespace eunomia

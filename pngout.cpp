@@ -30,6 +30,7 @@
  * @brief PNG形式畫像ファイルの書き込み
  *
  * @date 2021.4.26 LIBPOLYMNIAのPNG書き込み處理から改作
+ * @date 2021.11.23 PictureIndexed向けのsavePng()の仕樣を變更
  *
  */
 #include <iostream>
@@ -184,7 +185,8 @@ eunomia::savePng(
 
 bool
 eunomia::savePng(
-  const eunomia::PictureIndexed& pict, const std::filesystem::path& path)
+  const eunomia::PictureIndexed& pict, const std::filesystem::path& path,
+  bool trns, std::uint8_t tpal)
 {
   std::ofstream ofs(path, std::ios::out | std::ios::binary);
   if (!ofs)
@@ -207,7 +209,6 @@ eunomia::savePng(
 
   // パレットの設定
   auto palette = std::make_unique<png_color[]>(256);
-  //png_colorp palette = new png_color[256];
   for (int i = 0; i < 256; i++) {
     palette[i].red = pict.palette(i).red;
     palette[i].green = pict.palette(i).green;
@@ -215,17 +216,16 @@ eunomia::savePng(
   }
   png_set_PLTE(ppng, ppnginfo, palette.get(), 256);
 
-  // 透過処理
-  //auto transbf = std::make_unique<png_byte[]>(256);
-  //if (trans) {
-  //  for (int i = 0; i < 256; i++)
-  //    if (i == paltp)
-  //      transbf[i] = 0;
-  //    else
-  //      transbf[i] = 0xff;
-  //
-  //  png_set_tRNS(png_ptr, info_ptr, transbf.get(), 256, nullptr);
-  //}
+  //透過処理
+  auto transbf = std::make_unique<png_byte[]>(256);
+  if (trns) {
+    for (int i = 0; i < 256; i++)
+      if (i == tpal)
+        transbf[i] = 0;
+      else
+        transbf[i] = 0xff;
+    png_set_tRNS(ppng, ppnginfo, transbf.get(), 256, nullptr);
+  }
 
   // 各種情報の書き込み
   png_write_info(ppng, ppnginfo);

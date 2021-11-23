@@ -30,6 +30,7 @@
  * @brief 畫像擴大縮小プログラム
  *
  * @date R3.4.26 LIBPOLYMNIAからLIBEUNOMIAに移植するに伴ひ改作
+ * @date R3.11.23 擴張子の小文字化處理をutility.hに切り出し
  *
  */
 #include <iostream>
@@ -39,33 +40,32 @@
 #include "dibio.h"
 #include "pngio.h"
 #include "jpegio.h"
-
-
+#include "utility.h"
 
 
 /**
  * @brief 大文字を小文字に變換した文字列の生成
  */
-std::string toLower(const std::string& str)
-{
-  std::string res = str;
-  for (auto& c : res) {
-    c = std::tolower((unsigned char)c);
-  }
-  return res;
-}
+//std::string toLower(const std::string& str)
+//{
+//  std::string res = str;
+//  for (auto& c : res) {
+//    c = std::tolower((unsigned char)c);
+//  }
+//  return res;
+//}
 
 /**
  * @brief 大文字を小文字に變換した文字列の生成
  */
-std::wstring toLower(const std::wstring& str)
-{
-  std::wstring res = str;
-  for (auto& c : res) {
-    c = std::towlower(c);
-  }
-  return res;
-}
+//std::wstring toLower(const std::wstring& str)
+//{
+//  std::wstring res = str;
+//  for (auto& c : res) {
+//    c = std::towlower(c);
+//  }
+//  return res;
+//}
 
 
 
@@ -80,7 +80,8 @@ loadImage(
   std::unique_ptr<eunomia::PictureRgba>& uprgba,
   std::unique_ptr<eunomia::PictureIndexed>& upindx)
 {
-  auto e = toLower(path.extension().string());
+  //auto e = toLower(path.extension().string());
+  auto e = eunomia::lower(path.extension().string());
 
   if (e == ".bmp") {
     return eunomia::loadDib(path, uppict, upindx);
@@ -102,7 +103,8 @@ loadImage(
  */
 bool saveImage(const eunomia::Picture& pict, const std::filesystem::path& path)
 {
-  auto e = toLower(path.extension().string());
+  //auto e = toLower(path.extension().string());
+  auto e = eunomia::lower(path.extension().string());
 
   if (e == ".png") {
     return eunomia::savePng(pict, path);
@@ -126,8 +128,9 @@ saveImage(const eunomia::PictureRgba& pict, const std::filesystem::path& path)
 {
   using fspath = std::filesystem::path;
 
-  auto ext = path.extension();
-  auto e = toLower(ext);
+  //auto ext = path.extension();
+  //auto e = toLower(ext);
+  auto e = eunomia::lower(path.extension().string());
 
   if (e == fspath(".png")) {
     return eunomia::savePng(pict, path);

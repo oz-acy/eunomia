@@ -31,6 +31,7 @@
  * @brief ユーティリティー
  *
  * @date R3.4.29 v0.1
+ * @date R3.11.23 lower()の追加
  *
  */
 #ifndef INCLUDE_GUARD_EUNOMIA_UTILITY_H
@@ -41,6 +42,42 @@
 
 namespace eunomia
 {
+
+//////// LOWER STRING ////////////////
+/**
+ * @brief 小文字文字列化
+ *
+ * 文字列str中の大文字を小文字に變換した文字列を返す。
+ * @param str 對象文字列
+ * @return 變換結果
+ */
+inline
+std::string lower(const std::string& str)
+{
+  std::string res = str;
+  for (auto& c : res) {
+    c = std::tolower((unsigned char)c);
+  }
+  return res;
+}
+
+/**
+ * @brief 小文字文字列化
+ *
+ * 文字列str中の大文字を小文字に變換した文字列を返す。
+ * @param str 對象文字列
+ * @return 變換結果
+ */
+inline
+std::wstring toLower(const std::wstring& str)
+{
+  std::wstring res = str;
+  for (auto& c : res) {
+    c = std::towlower(c);
+  }
+  return res;
+}
+
 
 //////// STRING SPLIT ////////////////
 /**
