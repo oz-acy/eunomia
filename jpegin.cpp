@@ -35,11 +35,31 @@
 #include "debuglogger.h"
 
 
+namespace {
+
+// 多重定義(オーバーロード)によつてfopen、_wfopenを切り替へる
+inline
+std::FILE* openfile(const char* path)
+{
+  using namespace std;
+  return fopen(path, "rb");
+}
+
+inline
+std::FILE* openfile(const wchar_t* path)
+{
+  using namespace std;
+  return _wfopen(path, L"rb");
+}
+
+}// end of NONAME namespace 
+
+
 std::unique_ptr<eunomia::Picture>
 eunomia::loadJpeg(const std::filesystem::path& path) noexcept
 {
-  //auto infile = openfile(path.c_str());
-  auto infile = std::fopen(path.string().c_str(), "rb");
+  auto infile = openfile(path.c_str());
+  //auto infile = std::fopen(path.string().c_str(), "rb");
   if (!infile)
     return nullptr;
 

@@ -36,7 +36,7 @@
 #include "jpegio.h"
 #include "jpegio_implement.h"
 
-/*
+
 namespace {
 
 // 多重定義(オーバーロード)によつてfopen、_wfopenを切り替へる
@@ -55,8 +55,6 @@ std::FILE* openfile(const wchar_t* path)
 }
 
 }// end of NONAME namespace 
-*/
-
 
 
 bool
@@ -64,8 +62,8 @@ eunomia::saveJpeg(
   const eunomia::Picture& pict, const std::filesystem::path& path,
   bool prog, int quality) noexcept
 {
-  //auto outfile = openfile(path.c_str());
-  auto outfile = std::fopen(path.string().c_str(), "wb");
+  auto outfile = openfile(path.c_str());
+  //auto outfile = std::fopen(path.string().c_str(), "wb");
   if (!outfile)
     return false;
 
