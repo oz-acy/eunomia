@@ -352,9 +352,9 @@ bool eunomia::loadPng(
   std::unique_ptr<PictureRgba>& uprgba,
   std::unique_ptr<PictureIndexed>& upindx)
 {
-  uppict.release();
-  uprgba.release();
-  upindx.release();
+  uppict.reset();
+  uprgba.reset();
+  upindx.reset();
 
   std::ifstream ifs(path, std::ios::in | std::ios::binary);
   if (!ifs)
@@ -419,9 +419,9 @@ bool eunomia::loadPng(
   }
   catch (PngReadException_&) {
     png_destroy_read_struct(&ppng, &ppnginfo, nullptr);
-    uppict.release();
-    uprgba.release();
-    upindx.release();
+    uppict.reset();
+    uprgba.reset();
+    upindx.reset();
     return false;
   }
 }

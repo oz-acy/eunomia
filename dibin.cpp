@@ -390,7 +390,7 @@ loadDibPictureIndexed_(
 
   int np = (info.numpalette != 0) ? info.numpalette : (1 << info.bpp);
   if (!readPalette_(is, upindx->paletteBuffer(), np)) {
-    upindx.release();
+    upindx.reset();
     return false;
   }
 
@@ -412,7 +412,7 @@ loadDibPictureIndexed_(
   }
 
   // ここに到達するのは讀み込みに失敗したとき
-  upindx.release();
+  upindx.reset();
   return false;
 }
 
@@ -437,7 +437,7 @@ loadDibPicture_(
     }
 
     // ここに到達するのは讀み込みに失敗したとき
-    uppict.release();
+    uppict.reset();
   }
 
   return false;
@@ -455,8 +455,8 @@ eunomia::loadDib(
   std::unique_ptr<eunomia::Picture>& uppict,
   std::unique_ptr<eunomia::PictureIndexed>& upindx)
 {
-  uppict.release();
-  upindx.release();
+  uppict.reset();
+  upindx.reset();
 
   std::ifstream ifs(path, std::ios::in | std::ios::binary);
   if (!ifs)
