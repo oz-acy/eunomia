@@ -3,7 +3,6 @@ project(eunomia CXX)
 set(CMAKE_VERBOSE_MAKEFILE 1)
 
 enable_language(CXX)
-#set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,6 +10,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(ZLIB)
 find_package(PNG)
 find_package(JPEG)
+
+
+# デバッグバージョンのpostfix
+set(CMAKE_DEBUG_POSTFIX "d")
 
 
 # ソースファイルとヘッダファイル
@@ -48,6 +51,10 @@ set(EUNOMIA_HEADERS
   hexpainter.h
   dibio.h
 )
+set(EUNOMIA_PRIVATE_HEADERS
+  pict_indexing.h
+  pict_magnify_func.h
+)
 
 if (ZLIB_FOUND AND PNG_FOUND)
   list(APPEND EUNOMIA_SOURCES
@@ -68,52 +75,42 @@ if (JPEG_FOUND)
   list(APPEND EUNOMIA_HEADERS
     jpegio.h
   )
+  list(APPEND EUNOMIA_PRIVATE_HEADERS
+    jpegio_implement.h
+  )
 endif()
 
 
-# リリースビルドライブラリ
+# build targets
 add_library(eunomia STATIC ${EUNOMIA_SOURCES})
 set_target_properties(eunomia
   PROPERTIES PUBLIC_HEADER "${EUNOMIA_HEADERS}"
 )
-target_compile_options(eunomia PRIVATE
-  $<$<CXX_COMPILER_ID:GNU>:-Wall -O3>
-  $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
-)
-target_compile_definitions(eunomia PRIVATE NDEBUG)
+if(MSVC)
+  set_target_properties(eunomia PROPERTIES PREFIX "lib")
+endif()
+# 靜的ライブラリの指定を姑息に解決
+if(MSVC)
+  target_link_libraries(eunomia INTERFACE
+    PNG::PNG
+    JPEG::JPEG
+  )
+else()
+  target_link_libraries(eunomia INTERFACE
+    png z jpeg
+  )
+endif()
 target_include_directories(eunomia PRIVATE
   $<$<BOOL:PNG_FOUND>:${PNG_INCLUDE_DIRS}>
-  $<$<BOOL:ZLIB_FOUND>:${ZLIB_INCLUDE_DIRS}>
   $<$<BOOL:JPEG_FOUND>:${JPEG_INCLUDE_DIRS}>
-)
-target_link_libraries(eunomia PRIVATE
-  $<$<BOOL:PNG_FOUND>:png>
-  $<$<BOOL:ZLIB_FOUND>:z>
-  $<$<BOOL:JPEG_FOUND>:jpeg>
-)
-
-
-# デバッグビルドライブラリ
-add_library(eunomia-debug ${EUNOMIA_SOURCES})
-target_compile_options(eunomia-debug PRIVATE
-  $<$<CXX_COMPILER_ID:GNU>:-Wall -g3 -ggdb>
-  $<$<CXX_COMPILER_ID:Clang>:-Wall -g3 -ggdb>
-)
-target_include_directories(eunomia-debug PRIVATE
-  $<$<BOOL:PNG_FOUND>:${PNG_INCLUDE_DIRS}>
-  $<$<BOOL:ZLIB_FOUND>:${ZLIB_INCLUDE_DIRS}>
-  $<$<BOOL:JPEG_FOUND>:${JPEG_INCLUDE_DIRS}>
-)
-target_link_libraries(eunomia-debug PRIVATE
-  $<$<BOOL:PNG_FOUND>:png>
-  $<$<BOOL:ZLIB_FOUND>:z>
-  $<$<BOOL:JPEG_FOUND>:jpeg>
 )
 
 
 # インストール設定
-install(TARGETS eunomia eunomia-debug
+install(TARGETS eunomia
   EXPORT eunomia-export
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   INCLUDES DESTINATION include
   PUBLIC_HEADER DESTINATION include/eunomia
@@ -126,52 +123,42 @@ install(EXPORT eunomia-export
 )
 
 
+
+
 #### resizer ########
 if (ZLIB_FOUND AND PNG_FOUND AND JPEG_FOUND)
   add_executable(resizer
     resizer.cpp
   )
-  target_compile_options(resizer PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
-    $<$<CXX_COMPILER_ID:GNU>:-Wall -O3>
-  )
-  target_include_directories(resizer PRIVATE
-    ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS} ${JPEG_INCLUDE_DIRS}
-  )
   target_link_options(resizer PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:-static>
     $<$<CXX_COMPILER_ID:GNU>:-static>
   )
-  target_compile_definitions(resizer PRIVATE NDEBUG)
-  target_link_libraries(resizer eunomia png z)
+  target_link_libraries(resizer eunomia)
 
   #install(TARGETS resizer
   #  DESTINATION bin
   #)
 endif()
 
+
+#### hextest ########
 if (ZLIB_FOUND AND PNG_FOUND)
   add_executable(hextest
     hextest.cpp
-  )
-  target_compile_options(hextest PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-Wall -O3>
-    $<$<CXX_COMPILER_ID:Clang>:-Wall -O3>
-  )
-  target_compile_definitions(hextest PRIVATE NDEBUG)
-  target_include_directories(hextest PRIVATE
-    ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS}
   )
   target_link_options(hextest PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-static>
     $<$<CXX_COMPILER_ID:Clang>:-static>
   )
-  target_link_libraries(hextest eunomia png z)
+  target_link_libraries(hextest eunomia)
 
   #install(TARGETS hextest
   #  DESTINATION bin
   #)
 endif()
+
+
 
 
 #eof
