@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(GNUInstallDirs)
+
 find_package(ZLIB)
 find_package(PNG)
 find_package(JPEG)
@@ -91,35 +93,32 @@ if(MSVC)
 endif()
 # 靜的ライブラリの指定を姑息に解決
 if(MSVC)
-  target_link_libraries(eunomia INTERFACE
+  target_link_libraries(eunomia PRIVATE
     PNG::PNG
     JPEG::JPEG
   )
 else()
-  target_link_libraries(eunomia INTERFACE
+  target_link_libraries(eunomia PRIVATE
     png z jpeg
   )
 endif()
-target_include_directories(eunomia PRIVATE
-  $<$<BOOL:PNG_FOUND>:${PNG_INCLUDE_DIRS}>
-  $<$<BOOL:JPEG_FOUND>:${JPEG_INCLUDE_DIRS}>
-)
 
 
 # インストール設定
 install(TARGETS eunomia
   EXPORT eunomia-export
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  INCLUDES DESTINATION include
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   PUBLIC_HEADER DESTINATION include/eunomia
 )
 
 install(EXPORT eunomia-export
   FILE eunomia-config.cmake
-  DESTINATION share/cmake/eunomia/
-#  EXPORT_LINK_INTERFACE_LIBRARIES
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/eunomia/
+  NAMESPACE eunomia::
+  #EXPORT_LINK_INTERFACE_LIBRARIES
 )
 
 
