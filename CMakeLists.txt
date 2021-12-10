@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 project(eunomia CXX)
 set(CMAKE_VERBOSE_MAKEFILE 1)
+set(CMAKE_OPTIMIZE_DEPENDENCIES ON)
 
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 20)
@@ -90,6 +91,7 @@ set_target_properties(eunomia
 )
 if(MSVC)
   set_target_properties(eunomia PROPERTIES PREFIX "lib")
+  target_compile_options(eunomia PRIVATE /source-charset:utf-8)
 endif()
 # 靜的ライブラリの指定を姑息に解決
 if(MSVC)
@@ -134,7 +136,9 @@ if (ZLIB_FOUND AND PNG_FOUND AND JPEG_FOUND)
     $<$<CXX_COMPILER_ID:GNU>:-static>
   )
   target_link_libraries(resizer eunomia)
-
+  if(MSVC)
+    target_compile_options(resizer PRIVATE /source-charset:utf-8)
+  endif()
   #install(TARGETS resizer
   #  DESTINATION bin
   #)
@@ -151,6 +155,9 @@ if (ZLIB_FOUND AND PNG_FOUND)
     $<$<CXX_COMPILER_ID:Clang>:-static>
   )
   target_link_libraries(hextest eunomia)
+  if(MSVC)
+    target_compile_options(hextest PRIVATE /source-charset:utf-8)
+  endif()
 
   #install(TARGETS hextest
   #  DESTINATION bin
