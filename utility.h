@@ -32,11 +32,14 @@
  *
  * @date R3.4.29 v0.1
  * @date R3.11.23 lower()の追加
+ * @date R3.12.10 必要なヘッダのincludeの追加
  *
  */
 #ifndef INCLUDE_GUARD_EUNOMIA_UTILITY_H
 #define INCLUDE_GUARD_EUNOMIA_UTILITY_H
 
+#include <cctype>
+#include <cwctype>
 #include <string>
 #include <vector>
 
