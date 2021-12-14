@@ -1,16 +1,57 @@
+# CMakeLists.txt
+#
+# by oZ/acy
+# Copyright 2021 oZ/acy (名賀月晃嗣) <acy@hiemalis.org>
+#
+# Redistribution and use in source and binary forms, 
+#     with or without modification, 
+#   are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
 cmake_minimum_required(VERSION 3.19)
 project(eunomia CXX)
 set(CMAKE_VERBOSE_MAKEFILE 1)
 set(CMAKE_OPTIMIZE_DEPENDENCIES ON)
 
-enable_language(CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(GNUInstallDirs)
 
-find_package(ZLIB)
+
+option(BUILD_SHARED_LIBS
+  "Build shared libraries (.dll/.so) instead of static ones (.lib/.a)"
+  OFF
+)
+
+# staticなライブラリをビルドする場合は、依存ライブラリもstaticにする。
+if (NOT BUILD_SHARED_LIBS AND NOT MSVC)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES .a;.dll.a;.lib)
+endif()
+
+
+# 依存するライブラリ
+#find_package(ZLIB)
 find_package(PNG)
 find_package(JPEG)
 
@@ -59,7 +100,7 @@ set(EUNOMIA_PRIVATE_HEADERS
   pict_magnify_func.h
 )
 
-if (ZLIB_FOUND AND PNG_FOUND)
+if (PNG_FOUND)
   list(APPEND EUNOMIA_SOURCES
     pngin.cpp
     pngout.cpp
@@ -69,7 +110,7 @@ if (ZLIB_FOUND AND PNG_FOUND)
   )
 endif()
 
-if (JPEG_FOUND)
+if (JPEG_FOUND OR libjpeg-turbo_FOUND)
   list(APPEND EUNOMIA_SOURCES
     jpegio.cpp
     jpegin.cpp
@@ -84,8 +125,8 @@ if (JPEG_FOUND)
 endif()
 
 
-# build targets
-add_library(eunomia STATIC ${EUNOMIA_SOURCES})
+#### libeunomia ########
+add_library(eunomia ${EUNOMIA_SOURCES})
 set_target_properties(eunomia
   PROPERTIES PUBLIC_HEADER "${EUNOMIA_HEADERS}"
 )
@@ -93,17 +134,7 @@ if(MSVC)
   set_target_properties(eunomia PROPERTIES PREFIX "lib")
   target_compile_options(eunomia PRIVATE /source-charset:utf-8)
 endif()
-# 靜的ライブラリの指定を姑息に解決
-if(MSVC)
-  target_link_libraries(eunomia PRIVATE
-    PNG::PNG
-    JPEG::JPEG
-  )
-else()
-  target_link_libraries(eunomia PRIVATE
-    png z jpeg
-  )
-endif()
+target_link_libraries(eunomia PRIVATE PNG::PNG JPEG::JPEG)
 
 
 # インストール設定
@@ -120,47 +151,38 @@ install(EXPORT eunomia-export
   FILE eunomia-config.cmake
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/eunomia/
   NAMESPACE eunomia::
-  #EXPORT_LINK_INTERFACE_LIBRARIES
+  EXPORT_LINK_INTERFACE_LIBRARIES
 )
 
 
 
 
 #### resizer ########
-if (ZLIB_FOUND AND PNG_FOUND AND JPEG_FOUND)
+if (PNG_FOUND AND JPEG_FOUND)
   add_executable(resizer
     resizer.cpp
-  )
-  target_link_options(resizer PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:-static>
-    $<$<CXX_COMPILER_ID:GNU>:-static>
   )
   target_link_libraries(resizer eunomia)
   if(MSVC)
     target_compile_options(resizer PRIVATE /source-charset:utf-8)
   endif()
   #install(TARGETS resizer
-  #  DESTINATION bin
+  #  DESTINATION ${CMAKE_INSTALL_BINDIR}
   #)
 endif()
 
 
 #### hextest ########
-if (ZLIB_FOUND AND PNG_FOUND)
+if (PNG_FOUND)
   add_executable(hextest
     hextest.cpp
-  )
-  target_link_options(hextest PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-static>
-    $<$<CXX_COMPILER_ID:Clang>:-static>
   )
   target_link_libraries(hextest eunomia)
   if(MSVC)
     target_compile_options(hextest PRIVATE /source-charset:utf-8)
   endif()
-
   #install(TARGETS hextest
-  #  DESTINATION bin
+  #  DESTINATION ${CMAKE_INSTALL_BINDIR}
   #)
 endif()
 
