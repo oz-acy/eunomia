@@ -1,7 +1,7 @@
 # CMakeLists.txt
 #
 # by oZ/acy
-# Copyright 2021 oZ/acy (名賀月晃嗣) <acy@hiemalis.org>
+# Copyright 2021-2022 oZ/acy (名賀月晃嗣) <acy@hiemalis.org>
 #
 # Redistribution and use in source and binary forms, 
 #     with or without modification, 
@@ -163,9 +163,17 @@ if (PNG_FOUND AND JPEG_FOUND)
     resizer.cpp
   )
   target_link_libraries(resizer eunomia)
-  if(MSVC)
-    target_compile_options(resizer PRIVATE /source-charset:utf-8)
-  endif()
+  target_compile_options(resizer PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>
+  )
+  target_link_options(resizer PRIVATE
+    $<$<AND:$<BOOL:${MINGW}>,$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>>:-static>
+    #$<$<BOOL:${MINGW}>:-static>
+    #$<$<CXX_COMPILER_ID:MSVC>:/NODEFAULTLIB:libcmt>
+  )
+  #if(MSVC)
+  #  target_compile_options(resizer PRIVATE /source-charset:utf-8)
+  #endif()
   #install(TARGETS resizer
   #  DESTINATION ${CMAKE_INSTALL_BINDIR}
   #)
@@ -178,9 +186,17 @@ if (PNG_FOUND)
     hextest.cpp
   )
   target_link_libraries(hextest eunomia)
-  if(MSVC)
-    target_compile_options(hextest PRIVATE /source-charset:utf-8)
-  endif()
+  target_compile_options(hextest PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>
+  )
+  target_link_options(hextest PRIVATE
+    $<$<AND:$<BOOL:${MINGW}>,$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>>:-static>
+    #$<$<BOOL:${MINGW}>:-static>
+    #$<$<CXX_COMPILER_ID:MSVC>:/NODEFAULTLIB:libcmt>
+  )
+  #if(MSVC)
+  #  target_compile_options(hextest PRIVATE /source-charset:utf-8)
+  #endif()
   #install(TARGETS hextest
   #  DESTINATION ${CMAKE_INSTALL_BINDIR}
   #)
