@@ -33,6 +33,7 @@
  * @date R3.4.29 v0.1
  * @date R3.11.23 lower()の追加
  * @date R3.12.10 必要なヘッダのincludeの追加
+ * @date R6.3.28 toLower(const std::wstring&)をlower()に改名
  *
  */
 #ifndef INCLUDE_GUARD_EUNOMIA_UTILITY_H
@@ -72,7 +73,7 @@ std::string lower(const std::string& str)
  * @return 變換結果
  */
 inline
-std::wstring toLower(const std::wstring& str)
+std::wstring lower(const std::wstring& str)
 {
   std::wstring res = str;
   for (auto& c : res) {
