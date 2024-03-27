@@ -132,7 +132,7 @@ public:
 };
 
 
-}//endo of namespace implement_
+}//end of namespace implement_
 
 
 inline implement_::DebugLogger_& out()
