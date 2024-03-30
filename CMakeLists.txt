@@ -81,9 +81,10 @@ set(EUNOMIA_SOURCES
 )
 set(EUNOMIA_HEADERS
   exception.h
-  noncopyable.h
-  utility.h
   debuglogger.h
+  noncopyable.h
+  scopeguard.h
+  utility.h
   rect.h
   imagebuffer.h
     ibuf_blt.h
