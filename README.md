@@ -15,8 +15,9 @@
 |ヘッダファイル|内容|
 |:---|:---|
 |eunomia/exception.h|例外|
-|eunomia/noncopyable.h|CRTPによるコピー禁止用クラステンプレート|
 |eunomia/debuglogger.h|デバッグ用ロガー|
+|eunomia/noncopyable.h|CRTPによるコピー禁止用クラステンプレート|
+|eunomia/scopeguard.h|スコープガードテンプレート|
 |eunomia/imagebuffer.h|畫素表現型をパラメタとする畫像バッファクラステンプレート|
 |eunomia/colour.h|RGB24bit色情報クラス及びRGBA32bit色情報クラス|
 |eunomia/hexpainter.h|ヘクスマップ向け正六角形描畫用クラステンプレート|
